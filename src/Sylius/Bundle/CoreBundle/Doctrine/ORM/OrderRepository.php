@@ -25,7 +25,6 @@ use Sylius\Component\Core\OrderCheckoutStates;
 use Sylius\Component\Core\OrderPaymentStates;
 use Sylius\Component\Core\Repository\OrderRepositoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
-use Sylius\Component\User\Model\UserInterface;
 use SyliusLabs\AssociationHydrator\AssociationHydrator;
 
 class OrderRepository extends BaseOrderRepository implements OrderRepositoryInterface
@@ -107,7 +106,7 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
     public function countByCustomerAndCoupon(
         CustomerInterface $customer,
         PromotionCouponInterface $coupon,
-        bool $includeCancelled = false
+        bool $includeCancelled = false,
     ): int {
         $states = [OrderInterface::STATE_CART];
         if ($coupon->isReusableFromCancelledOrders()) {
@@ -184,7 +183,7 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
 
     public function findLatestNotEmptyCartByChannelAndCustomer(
         ChannelInterface $channel,
-        CustomerInterface $customer
+        CustomerInterface $customer,
     ): ?OrderInterface {
         return $this->createQueryBuilder('o')
             ->andWhere('o.state = :state')
@@ -232,7 +231,7 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
     public function getTotalPaidSalesForChannelInPeriod(
         ChannelInterface $channel,
         \DateTimeInterface $startDate,
-        \DateTimeInterface $endDate
+        \DateTimeInterface $endDate,
     ): int {
         return (int) $this->createQueryBuilder('o')
             ->select('SUM(o.total)')
@@ -278,7 +277,7 @@ class OrderRepository extends BaseOrderRepository implements OrderRepositoryInte
     public function countPaidForChannelInPeriod(
         ChannelInterface $channel,
         \DateTimeInterface $startDate,
-        \DateTimeInterface $endDate
+        \DateTimeInterface $endDate,
     ): int {
         return (int) $this->createQueryBuilder('o')
             ->select('COUNT(o.id)')

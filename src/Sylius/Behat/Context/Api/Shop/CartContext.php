@@ -107,7 +107,7 @@ final class CartContext implements Context
     public function iAddVariantOfThisProductToTheCart(
         ProductVariantInterface $productVariant,
         ProductInterface $product,
-        ?string $tokenValue
+        ?string $tokenValue,
     ): void {
         $this->putProductVariantToCart($productVariant, $tokenValue, 1);
     }
@@ -118,7 +118,7 @@ final class CartContext implements Context
     public function iAddThisProductWithToTheCart(
         ProductInterface $product,
         string $productOption,
-        string $productOptionValue
+        string $productOptionValue,
     ): void {
         $productData = json_decode($this->shopClient->show(Resources::PRODUCTS, $product->getCode())->getContent(), true, 512, \JSON_THROW_ON_ERROR);
 
@@ -160,7 +160,7 @@ final class CartContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_POST,
-            'items'
+            'items',
         );
         $request->updateContent([
             'productCode' => $productData['code'],
@@ -234,7 +234,7 @@ final class CartContext implements Context
     {
         Assert::true($this->responseChecker->hasViolationWithMessage(
             $this->shopClient->getLastResponse(),
-            sprintf('The product variant with %s code does not have sufficient stock.', $product->getCode())
+            sprintf('The product variant with %s code does not have sufficient stock.', $product->getCode()),
         ));
     }
 
@@ -246,7 +246,7 @@ final class CartContext implements Context
     {
         Assert::false($this->responseChecker->hasViolationWithMessage(
             $this->shopClient->getLastResponse(),
-            sprintf('The product variant with %s code does not have sufficient stock.', $product->getCode())
+            sprintf('The product variant with %s code does not have sufficient stock.', $product->getCode()),
         ));
     }
 
@@ -266,9 +266,9 @@ final class CartContext implements Context
         Assert::same(
             $this->responseChecker->getValue(
                 $this->shopClient->getLastResponse(),
-                'localeCode'
+                'localeCode',
             ),
-            $locale->getCode()
+            $locale->getCode(),
         );
     }
 
@@ -289,7 +289,7 @@ final class CartContext implements Context
 
         Assert::true(
             $this->responseChecker->isDeletionSuccessful($response),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Cart has not been created.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Cart has not been created.', $response),
         );
     }
 
@@ -303,7 +303,7 @@ final class CartContext implements Context
         $response = $this->shopClient->show(Resources::ORDERS, $tokenValue);
         $responseTotal = $this->responseChecker->getValue(
             $response,
-            'total'
+            'total',
         );
 
         Assert::same($total, (int) $responseTotal, 'Expected totals are not the same. Received message:' . $response->getContent());
@@ -318,7 +318,7 @@ final class CartContext implements Context
 
         Assert::true(
             $this->responseChecker->isShowSuccessful($response),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Cart has not been created.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Cart has not been created.', $response),
         );
     }
 
@@ -331,7 +331,7 @@ final class CartContext implements Context
 
         Assert::false(
             $this->responseChecker->isShowSuccessful($response),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Cart has not been created.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Cart has not been created.', $response),
         );
     }
 
@@ -351,7 +351,7 @@ final class CartContext implements Context
         $response = $this->shopClient->getLastResponse();
         Assert::true(
             $this->responseChecker->isCreationSuccessful($response),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Item has not been added.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Item has not been added.', $response),
         );
     }
 
@@ -363,7 +363,7 @@ final class CartContext implements Context
         $response = $this->shopClient->getLastResponse();
         Assert::false(
             $this->responseChecker->isCreationSuccessful($response),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Quantity of an order item cannot be lower than 1.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Quantity of an order item cannot be lower than 1.', $response),
         );
     }
 
@@ -455,7 +455,7 @@ final class CartContext implements Context
 
         Assert::true(
             $this->responseChecker->hasValue($response, 'name', $productName),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Name not found.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Name not found.', $response),
         );
     }
 
@@ -468,7 +468,7 @@ final class CartContext implements Context
 
         Assert::true(
             $this->responseChecker->hasValue($response, 'name', $variantName),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Name not found.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Name not found.', $response),
         );
     }
 
@@ -481,7 +481,7 @@ final class CartContext implements Context
 
         Assert::true(
             $this->responseChecker->hasValue($response, 'code', $variantCode),
-            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Name not found.', $response)
+            SprintfResponseEscaper::provideMessageWithEscapedResponseContent('Name not found.', $response),
         );
     }
 
@@ -539,7 +539,7 @@ final class CartContext implements Context
     public function theVisitorCanSeeProductInTheCart(
         ProductInterface $product,
         string $tokenValue,
-        int $quantity = 1
+        int $quantity = 1,
     ): void {
         $this->shopClient->show(Resources::ORDERS, $tokenValue);
 
@@ -556,7 +556,7 @@ final class CartContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_GET,
-            'items'
+            'items',
         );
         $this->shopClient->executeCustomRequest($request);
     }
@@ -568,7 +568,7 @@ final class CartContext implements Context
     {
         Assert::same(
             $this->responseChecker->getValue($this->shopClient->getLastResponse(), 'itemsTotal'),
-            $itemsTotal
+            $itemsTotal,
         );
     }
 
@@ -579,7 +579,7 @@ final class CartContext implements Context
     {
         Assert::same(
             $this->responseChecker->getValue($this->shopClient->getLastResponse(), 'taxTotal'),
-            $taxTotal
+            $taxTotal,
         );
     }
 
@@ -605,7 +605,7 @@ final class CartContext implements Context
 
         Assert::same(
             $this->responseChecker->getValue($response, 'shippingTotal'),
-            $shippingTotal
+            $shippingTotal,
         );
     }
 
@@ -675,7 +675,7 @@ final class CartContext implements Context
         $request = $this->requestFactory->custom(
             sprintf('%s/shop/orders', $this->apiUrlPrefix),
             HttpRequest::METHOD_POST,
-            $localeCode ? ['HTTP_ACCEPT_LANGUAGE' => $localeCode] : []
+            $localeCode ? ['HTTP_ACCEPT_LANGUAGE' => $localeCode] : [],
         );
         $this->shopClient->executeCustomRequest($request);
 
@@ -695,7 +695,7 @@ final class CartContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_POST,
-            'items'
+            'items',
         );
         $request->updateContent([
             'productVariant' => $this->iriConverter->getIriFromItem($this->productVariantResolver->getVariant($product)),
@@ -714,7 +714,7 @@ final class CartContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_POST,
-            'items'
+            'items',
         );
         $request->updateContent([
             'productVariant' => $this->iriConverter->getIriFromItem($productVariant),
@@ -731,7 +731,7 @@ final class CartContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_DELETE,
-            sprintf('items/%s', $orderItemId)
+            sprintf('items/%s', $orderItemId),
         );
         $this->shopClient->executeCustomRequest($request);
     }
@@ -741,7 +741,7 @@ final class CartContext implements Context
         if (!isset($item['variant'])) {
             throw new \InvalidArgumentException(
                 'Expected array to have variant key and variant to have product, but one these keys is missing. Current array: ' .
-                $item
+                $item,
             );
         }
 
@@ -755,7 +755,7 @@ final class CartContext implements Context
         if (!isset($item['variant'])) {
             throw new \InvalidArgumentException(
                 'Expected array to have variant key and variant to have product, but one these keys is missing. Current array: ' .
-                $item
+                $item,
             );
         }
 
@@ -786,7 +786,7 @@ final class CartContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_PATCH,
-            sprintf('items/%s', $orderItemId)
+            sprintf('items/%s', $orderItemId),
         );
         $request->updateContent(['quantity' => $quantity]);
 
@@ -819,7 +819,6 @@ final class CartContext implements Context
 
                 return;
             }
-
         }
 
         throw new \InvalidArgumentException('Invalid item data');
@@ -848,8 +847,8 @@ final class CartContext implements Context
             $expectedQuantity,
             SprintfResponseEscaper::provideMessageWithEscapedResponseContent(
                 sprintf('Quantity did not match. Expected %s.', $expectedQuantity),
-                $response
-            )
+                $response,
+            ),
         );
     }
 

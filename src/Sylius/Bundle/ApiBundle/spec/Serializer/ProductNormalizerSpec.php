@@ -16,7 +16,6 @@ namespace spec\Sylius\Bundle\ApiBundle\Serializer;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
@@ -27,7 +26,7 @@ final class ProductNormalizerSpec extends ObjectBehavior
 {
     function let(
         ProductVariantResolverInterface $defaultProductVariantResolver,
-        IriConverterInterface $iriConverter
+        IriConverterInterface $iriConverter,
     ): void {
         $this->beConstructedWith($defaultProductVariantResolver, $iriConverter);
     }
@@ -75,7 +74,7 @@ final class ProductNormalizerSpec extends ObjectBehavior
         NormalizerInterface $normalizer,
         ProductInterface $product,
         ProductVariantInterface $variant,
-        ArrayCollection $arrayCollection
+        ArrayCollection $arrayCollection,
     ): void {
         $this->setNormalizer($normalizer);
 
@@ -87,7 +86,7 @@ final class ProductNormalizerSpec extends ObjectBehavior
 
         $this->normalize($product, null, [])->shouldReturn([
             'variants' => ['/api/v2/shop/product-variants/CODE'],
-            'defaultVariant' => '/api/v2/shop/product-variants/CODE'
+            'defaultVariant' => '/api/v2/shop/product-variants/CODE',
         ]);
     }
 
@@ -97,7 +96,7 @@ final class ProductNormalizerSpec extends ObjectBehavior
         NormalizerInterface $normalizer,
         ProductVariantInterface $variant,
         ProductInterface $product,
-        ArrayCollection $arrayCollection
+        ArrayCollection $arrayCollection,
     ): void {
         $this->setNormalizer($normalizer);
 
@@ -110,13 +109,13 @@ final class ProductNormalizerSpec extends ObjectBehavior
 
         $this->normalize($product, null, [])->shouldReturn([
             'variants' => ['/api/v2/shop/product-variants/CODE'],
-            'defaultVariant' => null
+            'defaultVariant' => null,
         ]);
     }
 
     function it_throws_an_exception_if_the_normalizer_has_been_already_called(
         NormalizerInterface $normalizer,
-        ProductInterface $product
+        ProductInterface $product,
     ): void {
         $this->setNormalizer($normalizer);
 

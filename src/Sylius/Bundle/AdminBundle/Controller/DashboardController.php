@@ -22,7 +22,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 
 final class DashboardController
@@ -32,7 +31,7 @@ final class DashboardController
         private Environment $templatingEngine,
         private RouterInterface $router,
         private ?SalesDataProviderInterface $salesDataProvider = null,
-        private ?StatisticsDataProviderInterface $statisticsDataProvider = null
+        private ?StatisticsDataProviderInterface $statisticsDataProvider = null,
     ) {
     }
 
@@ -64,8 +63,8 @@ final class DashboardController
                 $channel,
                 (new \DateTime((string) $request->query->get('startDate'))),
                 (new \DateTime((string) $request->query->get('endDate'))),
-                (string) $request->query->get('interval')
-            )
+                (string) $request->query->get('interval'),
+            ),
         );
     }
 
