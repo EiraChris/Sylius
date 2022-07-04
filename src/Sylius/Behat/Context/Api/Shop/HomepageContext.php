@@ -35,7 +35,7 @@ final class HomepageContext implements Context
     {
         $this->client->customAction(
             sprintf('%s/shop/products?itemsPerPage=3&order[createdAt]=desc', $this->apiUrlPrefix),
-            HttpRequest::METHOD_GET
+            HttpRequest::METHOD_GET,
         );
     }
 
@@ -63,7 +63,7 @@ final class HomepageContext implements Context
     {
         $response = json_decode($this->client->getLastResponse()->getContent(), true);
         Assert::keyExists($response, 'hydra:member');
-        $menuItems = array_column($response['hydra:member'],  'name');
+        $menuItems = array_column($response['hydra:member'], 'name');
 
         Assert::notEmpty($menuItems);
         Assert::allOneOf($menuItems, $expectedMenuItems);

@@ -21,7 +21,6 @@ use Sylius\Component\Currency\Model\CurrencyInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 
 final class CurrencySwitchController
@@ -30,7 +29,7 @@ final class CurrencySwitchController
         private Environment $templatingEngine,
         private CurrencyContextInterface $currencyContext,
         private CurrencyStorageInterface $currencyStorage,
-        private ChannelContextInterface $channelContext
+        private ChannelContextInterface $channelContext,
     ) {
     }
 
@@ -41,7 +40,7 @@ final class CurrencySwitchController
 
         $availableCurrencies = array_map(
             fn (CurrencyInterface $currency) => $currency->getCode(),
-            $channel->getCurrencies()->toArray()
+            $channel->getCurrencies()->toArray(),
         );
 
         return new Response($this->templatingEngine->render('@SyliusShop/Menu/_currencySwitch.html.twig', [

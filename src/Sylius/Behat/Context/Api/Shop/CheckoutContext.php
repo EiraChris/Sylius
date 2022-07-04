@@ -82,7 +82,7 @@ final class CheckoutContext implements Context
         SharedStorageInterface $sharedStorage,
         RequestFactoryInterface $requestFactory,
         string $paymentMethodClass,
-        string $shippingMethodClass
+        string $shippingMethodClass,
     ) {
         $this->client = $client;
         $this->responseChecker = $responseChecker;
@@ -127,7 +127,7 @@ final class CheckoutContext implements Context
      */
     public function iProceedOrderWithShippingMethodAndPayment(
         ShippingMethodInterface $shippingMethod,
-        PaymentMethodInterface $paymentMethod
+        PaymentMethodInterface $paymentMethod,
     ): void {
         $this->iProceededWithShippingMethod($shippingMethod);
         $this->iChoosePaymentMethod($paymentMethod);
@@ -197,7 +197,7 @@ final class CheckoutContext implements Context
         string $street,
         string $postcode,
         string $countryName,
-        string $customerName
+        string $customerName,
     ): void {
         $addressType = 'billingAddress';
 
@@ -211,7 +211,7 @@ final class CheckoutContext implements Context
         string $city,
         string $street,
         string $postcode,
-        string $customerName
+        string $customerName,
     ): void {
         $this->addAddress('billingAddress', $city, $street, $postcode, $customerName);
     }
@@ -370,7 +370,7 @@ final class CheckoutContext implements Context
         $this->sharedStorage->set('response', $response);
         $this->sharedStorage->set(
             'order_number',
-            $this->responseChecker->getValue($response, 'number')
+            $this->responseChecker->getValue($response, 'number'),
         );
     }
 
@@ -399,7 +399,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $this->sharedStorage->get('cart_token'),
             HTTPRequest::METHOD_PATCH,
-            sprintf('shipments/%s', $this->getCart()['shipments'][0]['id'])
+            sprintf('shipments/%s', $this->getCart()['shipments'][0]['id']),
         );
         $request->setContent(['shippingMethod' => $this->iriConverter->getItemIriFromResourceClass($this->shippingMethodClass, ['code' => $shippingMethodCode])]);
 
@@ -416,7 +416,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $this->sharedStorage->get('cart_token'),
             HTTPRequest::METHOD_PATCH,
-            sprintf('payments/%s', $this->getCart()['payments'][0]['id'])
+            sprintf('payments/%s', $this->getCart()['payments'][0]['id']),
         );
         $request->setContent(['paymentMethod' => $this->iriConverter->getItemIriFromResourceClass($this->paymentMethodClass, ['code' => $paymentMethodCode])]);
 
@@ -430,7 +430,7 @@ final class CheckoutContext implements Context
     {
         Assert::true($this->isViolationWithMessageInResponse(
             $this->client->getLastResponse(),
-            'Order should be addressed first.'
+            'Order should be addressed first.',
         ));
     }
 
@@ -441,7 +441,7 @@ final class CheckoutContext implements Context
     {
         Assert::true($this->isViolationWithMessageInResponse(
             $this->client->getLastResponse(),
-            sprintf('The shipping method with %s code does not exist.', $code)
+            sprintf('The shipping method with %s code does not exist.', $code),
         ));
     }
 
@@ -486,7 +486,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $this->sharedStorage->get('cart_token'),
             HTTPRequest::METHOD_PATCH,
-            \sprintf('payments/%s', $this->getCart()['payments'][0]['id'])
+            \sprintf('payments/%s', $this->getCart()['payments'][0]['id']),
         );
         $request->setContent(['paymentMethod' => $this->iriConverter->getIriFromItem($paymentMethod)]);
 
@@ -533,7 +533,7 @@ final class CheckoutContext implements Context
     {
         Assert::inArray(
             $this->getCheckoutState(),
-            [OrderCheckoutStates::STATE_PAYMENT_SKIPPED, OrderCheckoutStates::STATE_PAYMENT_SELECTED]
+            [OrderCheckoutStates::STATE_PAYMENT_SKIPPED, OrderCheckoutStates::STATE_PAYMENT_SELECTED],
         );
     }
 
@@ -541,7 +541,7 @@ final class CheckoutContext implements Context
      * @Then I should not be able to confirm order because products do not fit :shippingMethod requirements
      */
     public function iShouldNotBeAbleToConfirmOrderBecauseDoNotBelongsToShippingCategory(
-        ShippingMethodInterface $shippingMethod
+        ShippingMethodInterface $shippingMethod,
     ): void {
         $this->iConfirmMyOrder();
 
@@ -553,8 +553,8 @@ final class CheckoutContext implements Context
             $response,
             sprintf(
                 'Product does not fit requirements for %s shipping method. Please reselect your shipping method.',
-                $shippingMethod->getName()
-            )
+                $shippingMethod->getName(),
+            ),
         ));
     }
 
@@ -570,9 +570,9 @@ final class CheckoutContext implements Context
                 $this->client->getLastResponse(),
                 sprintf(
                     'The payment method %s is not available for this order. Please choose another one.',
-                    $paymentMethod->getName()
-                )
-            )
+                    $paymentMethod->getName(),
+                ),
+            ),
         );
     }
 
@@ -584,8 +584,8 @@ final class CheckoutContext implements Context
         Assert::true(
             $this->responseChecker->hasViolationWithMessage(
                 $this->client->getLastResponse(),
-                sprintf('The payment method with %s code does not exist.', $code)
-            )
+                sprintf('The payment method with %s code does not exist.', $code),
+            ),
         );
     }
 
@@ -654,7 +654,7 @@ final class CheckoutContext implements Context
     {
         Assert::inArray(
             $this->getCheckoutState(),
-            [OrderCheckoutStates::STATE_SHIPPING_SELECTED, OrderCheckoutStates::STATE_SHIPPING_SKIPPED]
+            [OrderCheckoutStates::STATE_SHIPPING_SELECTED, OrderCheckoutStates::STATE_SHIPPING_SKIPPED],
         );
     }
 
@@ -772,7 +772,7 @@ final class CheckoutContext implements Context
     {
         $this->responseChecker->hasViolationWithMessage(
             $this->client->getLastResponse(),
-            sprintf('The country %s does not exist.', StringInflector::nameToLowercaseCode($countryName))
+            sprintf('The country %s does not exist.', StringInflector::nameToLowercaseCode($countryName)),
         );
     }
 
@@ -784,7 +784,7 @@ final class CheckoutContext implements Context
     {
         $this->responseChecker->hasViolationWithMessage(
             $this->client->getLastResponse(),
-            'The address without country cannot exist'
+            'The address without country cannot exist',
         );
     }
 
@@ -826,7 +826,7 @@ final class CheckoutContext implements Context
         Assert::same($response->getStatusCode(), 422);
         Assert::true($this->isViolationWithMessageInResponse($response, sprintf(
             'The shipping method %s is not available for this order. Please reselect your shipping method.',
-            $shippingMethod->getName()
+            $shippingMethod->getName(),
         )));
     }
 
@@ -885,7 +885,7 @@ final class CheckoutContext implements Context
     {
         Assert::true(
             $this->hasProductWithNameAndQuantityInCart($productName, $quantity),
-            sprintf('There is no product %s with quantity %d.', $productName, $quantity)
+            sprintf('There is no product %s with quantity %d.', $productName, $quantity),
         );
     }
 
@@ -898,7 +898,7 @@ final class CheckoutContext implements Context
         if ($this->sharedStorage->has('cart_token')) {
             $discountTotal = $this->responseChecker->getValue(
                 $this->client->show(Resources::ORDERS, $this->sharedStorage->get('cart_token')),
-                'orderPromotionTotal'
+                'orderPromotionTotal',
             );
 
             Assert::same($discount, (int) $discountTotal);
@@ -960,7 +960,7 @@ final class CheckoutContext implements Context
         foreach ([$firstElement, $secondElement] as $element) {
             $violation = $this->getViolation(
                 $violations,
-                $detailType . '.' . StringInflector::nameToCamelCase($element)
+                $detailType . '.' . StringInflector::nameToCamelCase($element),
             );
             Assert::same($violation['message'], sprintf('Please enter %s.', $element));
         }
@@ -974,7 +974,7 @@ final class CheckoutContext implements Context
     {
         Assert::true($this->isViolationWithMessageInResponse(
             $this->client->getLastResponse(),
-            sprintf('This product %s has been disabled.', $product->getName())
+            sprintf('This product %s has been disabled.', $product->getName()),
         ));
     }
 
@@ -985,7 +985,7 @@ final class CheckoutContext implements Context
     {
         Assert::true($this->isViolationWithMessageInResponse(
             $this->client->getLastResponse(),
-            sprintf('The product %s does not exist.', $product->getName())
+            sprintf('The product %s does not exist.', $product->getName()),
         ));
     }
 
@@ -996,7 +996,7 @@ final class CheckoutContext implements Context
     {
         Assert::true($this->isViolationWithMessageInResponse(
             $this->client->getLastResponse(),
-            sprintf('The product variant with %s does not exist.', $productVariant->getCode())
+            sprintf('The product variant with %s does not exist.', $productVariant->getCode()),
         ));
     }
 
@@ -1007,7 +1007,7 @@ final class CheckoutContext implements Context
     {
         Assert::true($this->isViolationWithMessageInResponse(
             $this->client->getLastResponse(),
-            sprintf('The product variant with %s does not exist.', $code)
+            sprintf('The product variant with %s does not exist.', $code),
         ));
     }
 
@@ -1051,8 +1051,8 @@ final class CheckoutContext implements Context
             $response,
             sprintf(
                 'This payment method %s has been disabled. Please reselect your payment method.',
-                $paymentMethod->getName()
-            )
+                $paymentMethod->getName(),
+            ),
         ));
     }
 
@@ -1086,7 +1086,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HTTPRequest::METHOD_POST,
-            'items'
+            'items',
         );
         $request->setContent([
             'productVariant' => $this->iriConverter->getItemIriFromResourceClass(\get_class($product->getVariants()->first()), ['code' => $code]),
@@ -1153,7 +1153,7 @@ final class CheckoutContext implements Context
 
         Assert::true($this->responseChecker->hasViolationWithMessage(
             $this->client->getLastResponse(),
-            sprintf('The product variant with %s name does not have sufficient stock.', $variant->getName())
+            sprintf('The product variant with %s name does not have sufficient stock.', $variant->getName()),
         ));
     }
 
@@ -1173,7 +1173,7 @@ final class CheckoutContext implements Context
         Assert::true($this->isViolationWithMessageInResponse(
             $response,
             'Please select proper province.',
-            $addressType
+            $addressType,
         ));
     }
 
@@ -1352,11 +1352,11 @@ final class CheckoutContext implements Context
 
         Assert::same(
             $this->responseChecker->getResponseContent($response)[$addressType]['firstName'],
-            $names[0]
+            $names[0],
         );
         Assert::same(
             $this->responseChecker->getResponseContent($response)[$addressType]['lastName'],
-            $names[1]
+            $names[1],
         );
     }
 
@@ -1367,7 +1367,7 @@ final class CheckoutContext implements Context
 
         Assert::same(
             $this->responseChecker->getResponseContent($response)[$addressType]['provinceName'],
-            $provinceName
+            $provinceName,
         );
     }
 
@@ -1385,7 +1385,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HTTPRequest::METHOD_POST,
-            'items'
+            'items',
         );
         $request->setContent([
             'productVariant' => $this->iriConverter->getIriFromItem($productVariant),
@@ -1402,7 +1402,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $tokenValue,
             HttpRequest::METHOD_DELETE,
-            \sprintf('items/%s', $orderItemId)
+            \sprintf('items/%s', $orderItemId),
         );
 
         $this->sharedStorage->set('response', $this->client->executeCustomRequest($request));
@@ -1455,7 +1455,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $this->sharedStorage->get('cart_token'),
             HTTPRequest::METHOD_PATCH,
-            'complete'
+            'complete',
         );
         $request->setContent(['notes' => $notes]);
 
@@ -1469,7 +1469,7 @@ final class CheckoutContext implements Context
             Resources::ORDERS,
             $this->sharedStorage->get('cart_token'),
             HTTPRequest::METHOD_PATCH,
-            sprintf('shipments/%s', $this->getCart()['shipments'][0]['id'])
+            sprintf('shipments/%s', $this->getCart()['shipments'][0]['id']),
         );
         $request->setContent(['shippingMethod' => $this->iriConverter->getIriFromItem($shippingMethod)]);
 
@@ -1482,7 +1482,7 @@ final class CheckoutContext implements Context
         string $street,
         string $postcode,
         string $customerName,
-        ?string $countryName = null
+        ?string $countryName = null,
     ): void {
         [$firstName, $lastName] = explode(' ', $customerName);
 

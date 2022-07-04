@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request as HttpRequest;
 final class RequestFactory implements RequestFactoryInterface
 {
     private const LINKED_DATA_JSON_CONTENT_TYPE = 'application/ld+json';
+
     private const UPLOAD_FILE_CONTENT_TYPE = 'multipart/form-data';
 
     public function __construct(
@@ -30,7 +31,7 @@ final class RequestFactory implements RequestFactoryInterface
         ?string $section,
         string $resource,
         string $authorizationHeader,
-        ?string $token = null
+        ?string $token = null,
     ): RequestInterface {
         $builder = RequestBuilder::create(
             sprintf('%s/%s/%s', $this->apiUrlPrefix, $section, $resource),
@@ -61,7 +62,7 @@ final class RequestFactory implements RequestFactoryInterface
         string $resource,
         string $id,
         string $authorizationHeader,
-        ?string $token = null
+        ?string $token = null,
     ): RequestInterface {
         $builder = RequestBuilder::create(
             sprintf('%s/%s/%s/%s', $this->apiUrlPrefix, $section, $resource, $id),
@@ -80,7 +81,7 @@ final class RequestFactory implements RequestFactoryInterface
         string $section,
         string $resource,
         string $authorizationHeader,
-        ?string $token = null
+        ?string $token = null,
     ): RequestInterface {
         $builder = RequestBuilder::create(
             sprintf('%s/%s/%s', $this->apiUrlPrefix, $section, $resource),
@@ -101,7 +102,7 @@ final class RequestFactory implements RequestFactoryInterface
         string $resource,
         string $id,
         string $authorizationHeader,
-        ?string $token = null
+        ?string $token = null,
     ): RequestInterface {
         $builder = RequestBuilder::create(
             sprintf('%s/%s/%s/%s', $this->apiUrlPrefix, $section, $resource, $id),
@@ -122,7 +123,7 @@ final class RequestFactory implements RequestFactoryInterface
         string $resource,
         string $id,
         string $authorizationHeader,
-        ?string $token = null
+        ?string $token = null,
     ): RequestInterface {
         $builder = RequestBuilder::create(
             sprintf('%s/%s/%s/%s', $this->apiUrlPrefix, $section, $resource, $id),
@@ -158,7 +159,7 @@ final class RequestFactory implements RequestFactoryInterface
         string $resource,
         array $files,
         string $authorizationHeader,
-        ?string $token = null
+        ?string $token = null,
     ): RequestInterface {
         $builder = RequestBuilder::create(
             sprintf('%s/%s/%s', $this->apiUrlPrefix, $section, $resource),

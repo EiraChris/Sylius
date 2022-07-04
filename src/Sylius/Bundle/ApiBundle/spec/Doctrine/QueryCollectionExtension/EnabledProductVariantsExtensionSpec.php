@@ -33,7 +33,7 @@ final class EnabledProductVariantsExtensionSpec extends ObjectBehavior
     function it_does_nothing_if_current_resource_is_not_a_product_variant(
         UserContextInterface $userContext,
         QueryBuilder $queryBuilder,
-        QueryNameGeneratorInterface $queryNameGenerator
+        QueryNameGeneratorInterface $queryNameGenerator,
     ): void {
         $userContext->getUser()->shouldNotBeCalled();
         $queryBuilder->getRootAliases()->shouldNotBeCalled();
@@ -45,7 +45,7 @@ final class EnabledProductVariantsExtensionSpec extends ObjectBehavior
         UserContextInterface $userContext,
         UserInterface $user,
         QueryBuilder $queryBuilder,
-        QueryNameGeneratorInterface $queryNameGenerator
+        QueryNameGeneratorInterface $queryNameGenerator,
     ): void {
         $userContext->getUser()->willReturn($user);
         $user->getRoles()->willReturn(['ROLE_API_ACCESS']);
@@ -60,7 +60,7 @@ final class EnabledProductVariantsExtensionSpec extends ObjectBehavior
         UserInterface $user,
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
-        ChannelInterface $channel
+        ChannelInterface $channel,
     ): void {
         $userContext->getUser()->willReturn($user);
         $user->getRoles()->willReturn([]);
@@ -71,9 +71,12 @@ final class EnabledProductVariantsExtensionSpec extends ObjectBehavior
         $queryBuilder->andWhere('o.enabled = :enabled')->shouldBeCalled()->willReturn($queryBuilder);
         $queryBuilder->setParameter('enabled', true)->shouldBeCalled()->willReturn($queryBuilder);
 
-        $this->applyToCollection($queryBuilder, $queryNameGenerator,
-            ProductVariantInterface::class, 'get',
-            [ContextKeys::CHANNEL => $channel, ContextKeys::LOCALE_CODE => 'en_US']
+        $this->applyToCollection(
+            $queryBuilder,
+            $queryNameGenerator,
+            ProductVariantInterface::class,
+            'get',
+            [ContextKeys::CHANNEL => $channel, ContextKeys::LOCALE_CODE => 'en_US'],
         );
     }
 }
